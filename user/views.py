@@ -7,6 +7,8 @@ import yaml
 import asyncio
 # Create your views here.
 
+
+
 @oauth
 def login(request, email=None):
     assert email != None
@@ -24,13 +26,14 @@ def login(request, email=None):
     token = gen_token(email)
     token_model = models.Token(token=token, user=user)
     token_model.save()
+    
     return JsonResponse({
         'status_code': 200,
         'token': token,
     })
 
-
-def verify_token(request):
+@verification
+def verify_token(request, user=None):
     return JsonResponse({
         'status_code': 200,
     })

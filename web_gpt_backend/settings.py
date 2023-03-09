@@ -25,8 +25,8 @@ SECRET_KEY = "django-insecure-_j9sjfi)8tvwsql+be!)#0(b=_5fp7qo(qu=a3efl0n+_5sn6m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://localhost:3000',
-                 'localhost',]
+ALLOWED_HOSTS = ['chat.chuanmx.cc',
+                 'api.chat.chuanmx.cc',]
 
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
+    'https://chat.chuanmx.cc',
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -53,8 +54,9 @@ CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000',
                         'http://localhost:3000']
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
+    "plugins.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     # "django.middleware.csrf.CsrfViewMiddleware",
