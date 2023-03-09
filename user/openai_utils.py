@@ -2,8 +2,9 @@ import openai
 import aiohttp
 from tenacity import retry, stop_after_attempt, wait_fixed
 import yaml
+import os
 # Feb 15, added my mark
-openai.api_key = yaml.load(open('config.yml', 'r', encoding='utf-8').read())['api_key']
+openai.api_key = os.environ['api_key']
 
 
 class ProxyError(Exception):
@@ -51,7 +52,7 @@ async def get_answer_simple(text, use_proxy=False):
 async def completion(use_proxy=False, **kwargs):
 
     if use_proxy:
-        url = yaml.load(open('config.yml', 'r', encoding='utf-8').read())['proxy_url']
+        url = os.environ['proxy_uri']
         payload = {"model": "gpt-3.5-turbo", **kwargs}
 
         async with aiohttp.ClientSession() as session:
