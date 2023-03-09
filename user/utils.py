@@ -52,6 +52,14 @@ def verification(fun):
         return fun(**args, **kwargs, user=query.first().user)
     return wrapped_func
 
+def decode_bytes(data):
+    pairs = data.split('&')
+    ret = {}
+    for pair in pairs:
+        key, value = pair.split('=')
+        ret[key] = value
+    return ret
+
 def oauth(fun):
     def wrapped_func(*args, **kwargs):
         # get code in request.body
@@ -61,17 +69,32 @@ def oauth(fun):
         
         # get client_id and secret in config.yml
         conf = open('config.yml', 'r', encoding='utf-8').read()
-        parse = yaml.load(conf)
-        client_id = parse['client_id']
-        client_secret = parse['client_secret']
+        conf = yaml.load(conf)
+        client_id = conf['client_id']
+        client_secret = conf['client_secret']
 
         # oauth token
         url = f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={client_secret}&code={code}"
-        print(url)
         response = requests.get(url, {'content_type':'application/json'})
-        print(response.text)
-        return JsonResponse({'status_code':500})
+        response = decode_bytes(response.text)
+        if 'access_token' not in response:
+            return JsonResponse({'status_code':500, 'data':'code error'})
+
+        token = response['access_token']
+        url = "https://api.github.com/user"
+        response = requests.get(url, headers={
+            'Authorization': f'Bearer {token}',
+            'content_type': 'application/json',
+        })
+        data = response.json()
         # check email in whitelist
-        # register user and re-gen token
-        pass
+        if "email" not in data:
+            return JsonResponse({'status_code':400, 'data':'Email not found in GitHub profile!'})
+        email = data['email']
+        print(conf['email_whitelist'][0])
+        if email not in conf['email_whitelist']:
+            print(email)
+            return JsonResponse({'status_code':400, 'data':'You are not qualified to login!'})
+        return fun(*args, **kwargs, email=email)
+
     return wrapped_func

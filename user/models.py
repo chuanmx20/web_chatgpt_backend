@@ -3,15 +3,15 @@ import time
 
 # Create your models here.
 class User(models.Model):
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
 
     def __str__(self):
         return "%s" % (self.email)
 
 class Token(models.Model):
-    token = models.CharField(max_length=100, unique=True, blank=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    exp = models.DateTimeField(default=time.time() + 3600)
+    token = models.CharField(max_length=200, blank=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
+    exp = models.FloatField(default=time.time() + 3600, blank=False)
 
 class Message(models.Model):
     from_user = models.BooleanField(default=False)
