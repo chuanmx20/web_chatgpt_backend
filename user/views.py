@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from .utils import *
 from . import models
+from .openai_utils import get_answer
+import yaml
+import asyncio
 # Create your views here.
 
 @oauth
@@ -38,7 +41,7 @@ def fetch_data(request, user=None):
     assert type(user) == models.User
 
     data = []
-    for msg in models.Message.objects.filter(user=user).order_by('-time'):
+    for msg in models.Message.objects.filter(user=user).order_by('time'):
         data.append({
             'role': 'user' if msg.from_user else 'assistant',
             'content': msg.content,
@@ -55,7 +58,19 @@ def ask(request, user=None):
     content = json.loads(request.body)['content']
     message = models.Message(from_user=True, content=content, user=user)
     message.save()
+    messages = models.Message.objects.filter(user=user).order_by('-time').all()
+    context = [{'role': 'system', 'content':'You are a helpful assistant.'}]
+    count = yaml.load(open('config.yml', 'r', encoding='utf-8').read())['context_count']
+
+    for i, message in enumerate(messages):
+        if (i >= count):
+            break
+        context.insert(0, message.get_message())
+    answer = asyncio.run(get_answer(context, True))
+
+    models.Message(from_user=False, content=answer, user=user).save()
+
     return JsonResponse({
         'status_code':200,
-        'data':{'role':'assistant', 'content':'answer'},
+        'data':{'role':'assistant', 'content':answer},
     })

@@ -15,6 +15,12 @@ class Token(models.Model):
 
 class Message(models.Model):
     from_user = models.BooleanField(default=False)
-    content = models.TextField(blank=True)
+    content = models.TextField(blank=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
+
+    def get_message(self):
+        return {
+            'role': 'user' if self.from_user else 'assistant',
+            'content': self.content,
+        }
