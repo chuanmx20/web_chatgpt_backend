@@ -38,7 +38,7 @@ def gen_token(email):
 
 
 def verification(fun):
-    def wrapped_func(*args, **kwargs):
+    def wrapped_func(*args):
         token = args[0].headers.get('Authorization')
         if 'Authorization' not in args[0].headers.keys() or token == '':
             return JsonResponse({'status_code': 500, 'message': '请检查请求头Authorization'})
@@ -48,8 +48,8 @@ def verification(fun):
         if query.first().exp < time.time():
             query.first().delete()
             return JsonResponse({'status_code': 401, 'data': 'Token expired'})
-
-        return fun(**args, **kwargs, user=query.first().user)
+        user = query.first().user
+        return fun(*args, user=user)
     return wrapped_func
 
 def decode_bytes(data):
@@ -91,9 +91,7 @@ def oauth(fun):
         if "email" not in data:
             return JsonResponse({'status_code':400, 'data':'Email not found in GitHub profile!'})
         email = data['email']
-        print(conf['email_whitelist'][0])
         if email not in conf['email_whitelist']:
-            print(email)
             return JsonResponse({'status_code':400, 'data':'You are not qualified to login!'})
         return fun(*args, **kwargs, email=email)
 

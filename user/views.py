@@ -35,7 +35,7 @@ def verify_token(request):
 
 @verification
 def fetch_data(request, user=None):
-    assert user != None
+    assert type(user) == models.User
 
     data = []
     for msg in models.Message.objects.filter(user=user).order_by('-time'):
