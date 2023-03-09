@@ -68,3 +68,12 @@ def fetch_data(request, user=None):
             }
         ]
     })
+
+@verification
+def ask(request, user=None):
+    assert type(user) == models.User
+    
+    return JsonResponse({
+        'status_code':200,
+        'data':{'role':'assistant', 'content':'answer'},
+    })
