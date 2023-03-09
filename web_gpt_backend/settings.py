@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['http://localhost:3000',
 
 INSTALLED_APPS = [
     "corsheaders",
+    "user.apps.UserConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
