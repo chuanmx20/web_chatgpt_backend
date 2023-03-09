@@ -1,0 +1,10 @@
+client_id: # your github oauth client_id
+client_secret: # you github oauth secret
+
+email_whitelist: [
+  # your whitelist for who can use
+]
+
+api_key: # your openai api_key
+proxy_url: # your proxy address, for example `example.com/proxy`
+context_count: 10 # In case reach limit of token, set limit of context of each message
