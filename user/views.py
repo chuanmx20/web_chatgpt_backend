@@ -43,36 +43,18 @@ def fetch_data(request, user=None):
             'role': 'user' if msg.from_user else 'assistant',
             'content': msg.content,
         })
-        return JsonResponse({
-            'status_code': 200,
-            'data': data
-        })
+    print(data)
     return JsonResponse({
         'status_code': 200,
-        'data': [
-            {
-                'role': 'user',
-                'content': 'Q1',
-            },
-            {
-                'role': 'assistant',
-                'content': 'A1',
-            },
-            {
-                'role': 'user',
-                'content': 'Q2'
-            },
-            {
-                'role': 'assistant',
-                'content': 'A2'
-            }
-        ]
+        'data': data,
     })
 
 @verification
 def ask(request, user=None):
     assert type(user) == models.User
-    
+    content = json.loads(request.body)['content']
+    message = models.Message(from_user=True, content=content, user=user)
+    message.save()
     return JsonResponse({
         'status_code':200,
         'data':{'role':'assistant', 'content':'answer'},
