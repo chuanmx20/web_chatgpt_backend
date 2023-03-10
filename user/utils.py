@@ -92,9 +92,10 @@ def oauth(fun):
             'content_type': 'application/json',
         })
         data = response.json()
+        print(data)
+        print(conf)
         # check email in whitelist
         if "email" not in data:
-            print('type a')
             return JsonResponse({'status_code':400, 'data':'Email not found in GitHub profile!'})
         email = data['email']
         if email not in conf['email_whitelist']:
