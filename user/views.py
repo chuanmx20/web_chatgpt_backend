@@ -5,11 +5,15 @@ from . import models
 from .openai_utils import get_answer
 import yaml
 import asyncio
+import time
 # Create your views here.
+
+
 
 @oauth
 def login(request, email=None):
     assert email != None
+
     users = models.User.objects.filter(email=email)
     user = None
     if users.__len__() == 0:
@@ -22,15 +26,16 @@ def login(request, email=None):
         tokens.first().delete()
     
     token = gen_token(email)
-    token_model = models.Token(token=token, user=user)
+    token_model = models.Token(token=token, user=user, exp=time.time()+36000)
     token_model.save()
+    
     return JsonResponse({
         'status_code': 200,
         'token': token,
     })
 
-
-def verify_token(request):
+@verification
+def verify_token(request, user=None):
     return JsonResponse({
         'status_code': 200,
     })
@@ -74,3 +79,10 @@ def ask(request, user=None):
         'status_code':200,
         'data':{'role':'assistant', 'content':answer},
     })
+
+@verification
+def clear(request, user=None):
+    assert type(user) == nodels.User
+    # delete all messages for this user
+    models.Message.objects.filter(user=user).delete()
+    return JsonResponse({'status_code':200}, 'data':{'Cleaned'})

@@ -62,8 +62,11 @@ def decode_bytes(data):
 
 def oauth(fun):
     def wrapped_func(*args, **kwargs):
+        if (args[0].method != 'POST'):
+            return JsonResponse({'status_code':400, 'data': 'Bad Request'})
         # get code in request.body
         code = json.loads(args[0].body).get('code', '')
+        print(code)
         if code == '':
             return JsonResponse({'status_code': 400, 'message': 'Invalid oauth code'})
         
@@ -75,6 +78,7 @@ def oauth(fun):
 
         # oauth token
         url = f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={client_secret}&code={code}"
+        print(url)
         response = requests.get(url, {'content_type':'application/json'})
         response = decode_bytes(response.text)
         if 'access_token' not in response:
@@ -82,16 +86,20 @@ def oauth(fun):
 
         token = response['access_token']
         url = "https://api.github.com/user"
+        print(url)
         response = requests.get(url, headers={
             'Authorization': f'Bearer {token}',
             'content_type': 'application/json',
         })
         data = response.json()
+        print(data)
+        print(conf)
         # check email in whitelist
         if "email" not in data:
             return JsonResponse({'status_code':400, 'data':'Email not found in GitHub profile!'})
         email = data['email']
         if email not in conf['email_whitelist']:
+            print('type b')
             return JsonResponse({'status_code':400, 'data':'You are not qualified to login!'})
         return fun(*args, **kwargs, email=email)
 

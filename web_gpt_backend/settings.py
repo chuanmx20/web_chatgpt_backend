@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os, yaml
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-_j9sjfi)8tvwsql+be!)#0(b=_5fp7qo(qu=a3efl0n+_5sn6m"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False 
 
-ALLOWED_HOSTS = ['http://localhost:3000',
-                 'localhost',]
-
-
+ALLOWED_HOSTS = ['chat.chuanmx.cc',
+                 'api.chat.chuanmx.cc',]
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,16 +44,19 @@ INSTALLED_APPS = [
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
+    'https://chat.chuanmx.cc',
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000',
-                        'http://localhost:3000']
+                        'http://localhost:3000',
+                        'https://api.chat.chuanmx.cc',]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
+    "plugins.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     # "django.middleware.csrf.CsrfViewMiddleware",
