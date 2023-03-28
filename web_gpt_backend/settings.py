@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-_j9sjfi)8tvwsql+be!)#0(b=_5fp7qo(qu=a3efl0n+_5sn6m"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False 
 
 ALLOWED_HOSTS = ['chat.chuanmx.cc',
                  'api.chat.chuanmx.cc',]
@@ -50,7 +50,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000',
-                        'http://localhost:3000']
+                        'http://localhost:3000',
+                        'https://api.chat.chuanmx.cc',]
 
 MIDDLEWARE = [
     # 'corsheaders.middleware.CorsMiddleware',
