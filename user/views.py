@@ -82,7 +82,7 @@ def ask(request, user=None):
 
 @verification
 def clear(request, user=None):
-    assert type(user) == nodels.User
+    assert type(user) == models.User
     # delete all messages for this user
     models.Message.objects.filter(user=user).delete()
-    return JsonResponse({'status_code':200}, 'data':{'Cleaned'})
+    return JsonResponse({'status_code':200, 'data':'Cleaned'})
